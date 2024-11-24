@@ -1,0 +1,54 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com//master/nextflow_schema.json",
+    "titale": "pipeline parameters",
+    "description": "",
+    "type": "object",
+    "properties": {
+      "experiment_name": {
+        "type": "string",
+        "description": "Name of the experiment, used for reports (title and filename)."
+      },
+      "no_trim": {
+        "type": "boolean",
+        "default": false,
+        "required": false,
+        "description": "Disable trimming of input sequences."
+      },
+      "barcode_both_ends": {
+        "type": "boolean",
+        "default": false,
+        "required": false,
+        "description": "Enable barcode detectionat both ends of the read."
+      },
+      "emit_fastq": {
+        "type": "boolean",
+        "default": false,
+        "required": false,
+        "description": "Emit FASTQ files as output."
+      },
+      "emit_fastq": {
+        "type": "boolean",
+        "default": false,
+        "required": false,
+        "description": "Emit FASTQ files as output."
+      },
+      "kit_nameq": {
+        "type": "string",
+        "default": null,
+        "required": true,
+        "description": "Name of the kit used for demultiplexing."
+      },
+      "input_dir": {
+        "type": "string",
+        "default": "./data",
+        "required": true,
+        "description": "Path to the directory containing input files."
+      },
+      "output_dir": {
+        "type": "string",
+        "default": "./output",
+        "required": true,
+        "description": "Path tothe directorywhere output files will be written."
+      },
+}
