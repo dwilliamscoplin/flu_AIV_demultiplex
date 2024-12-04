@@ -1,0 +1,25 @@
+[arrangement]
+name = "BC"
+kit = "BC"
+
+mask1_front = ""
+mask1_rear = "AGCGAAAGCAGG"
+mask2_front = ""
+mask2_rear = "CCTTGTTTCTACT"
+
+# Barcode sequences
+barcode1_pattern = "fwd%02i"
+barcode2_pattern = "rev%02i"
+first_index = 1
+last_index = 24
+
+## Scoring options
+[scoring]
+max_barcode_penalty = 10
+barcode_end_proximity = 75
+min_barcode_penalty_dist = 4
+min_separation_only_dist = 5
+flank_left_pad = 15
+flank_right_pad = 15
+front_barcode_window = 90
+rear_barcode_window = 65
