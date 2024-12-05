@@ -25,21 +25,36 @@ To use this workflow, ensure you have the following installed:
    dorado-0.8.3-linux-x64/bin/dorado --version
 
 ## Workflow Inputs
-- **Input FASTQ files**: Add your basecalled reads (fastq.gz or bam files) to the data/ directory.
+- **Input files**: Add your raw (.pod5 or .fast5) or already basecalled reads (fastq.gz or bam files) to the data/ directory.
 - **Custom barcode primers and barcode arrangements**: Provided within the workflow in the barcodes directory.
 
 ## Usage
-  Run the workflow using the following command:
+- **For raw (.pod5 or .fast5)** reads run the workflow using the following command:
    ```bash
-   nextflow run main.nf
+   nextflow run main-basecaller.nf <model> --min_qscore <number>
+
+   #Options:
+   <model>: specify model speed (fast, hac, or sup) to automatically select a basecalling model.
+   <number>: specify number to discard reads with mean Q-score below this threshold.
+   --emit_fastq: specify to generate FASTQ output instead of default BAM.
+   --no_trim: disable trimming of barcode sequences.
+   --barcode_both_ends: Enable demultiplexing based on barcodes at both ends.e
+  ```
+
+  This workflows will first basecall raw reads and then demultiplex them. 
    
-# Optional
---emit_fastq: Specify to generate FASTQ output instead of default BAM.
---no_trim: Disable trimming of barcode sequences.
---barcode_both_ends: Enable demultiplexing based on barcodes at both ends.
-```
+- **For existing basecalled (.bam, .fastq, .fastq.gz) datasets** run the workflow using the following command:
+   ```bash
+   nextflow run main-demux.nf
+
+   #Options:
+   --emit_fastq: Specify to generate FASTQ output instead of default BAM.
+   --no_trim: Disable trimming of barcode sequences.
+   --barcode_both_ends: Enable demultiplexing based on barcodes at both ends.
+  ```
+
 ## Output
-The workflow produces demultiplexed BAM or FASTQ files separated by barcode.
+Both workflows result in multiple BAM files being generated in the output/basecalled folder, one per barcode (formatted as NAME_BARCODEXX.bam) and one for all unclassified reads. As with the in-line mode, --emit_fastq, --no_trim, and --barcode_both_ends are also available as additional options.
 
 ## References
 - [Protocol for Influenza A Custom Barcoded Primers](https://www.protocols.io/view/optimized-rt-pcr-protocols-for-whole-genome-amplif-bp2l62r15gqe/v1)
