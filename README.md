@@ -25,7 +25,7 @@ To use this workflow, ensure you have the following installed:
    dorado-0.8.3-linux-x64/bin/dorado --version
 
 ## Workflow Inputs
-- **Input files**: Add your raw (.pod5 or .fast5) or already basecalled reads (fastq.gz or bam files) to the data/ directory.
+- **Input files**: Add your raw (.pod5 or .fast5) or already basecalled (fastq.gz or bam files) reads to the data/ directory.
 - **Custom barcode primers and barcode arrangements**: Provided within the workflow in the barcodes directory.
 
 ## Usage
