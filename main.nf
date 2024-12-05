@@ -13,7 +13,7 @@ process "dorado_demultiplex" {
     publishDir "${projectDir}/output/", mode: 'copy'
 
     input:
-    path input_reads
+    val input_dir
         
     output:
     path "demultiplexed/*", emit: demultiplexed
@@ -29,13 +29,13 @@ process "dorado_demultiplex" {
         ${params.emit_fastq ? '--emit-fastq' : ''} \\
         --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
         --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
-        ${params.input_dir}
+        ${input_dir}
     """
 }
 
 workflow {
 
-    input_reads = Channel.fromPath("${params.input_dir}/*")
+    input_dir = params.input_dir
         
-    dorado_demultiplex(input_reads)
+    dorado_demultiplex(input_dir)
 }
