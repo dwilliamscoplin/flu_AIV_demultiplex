@@ -54,7 +54,7 @@ To use this workflow, ensure you have the following installed:
   ```
 
 ## Output
-This workflow results in multiple BAM files being generated in the output/basecalled folder, one per barcode (formatted as NAME_BARCODEXX.bam) and one for all unclassified reads. As with the in-line mode, --emit_fastq, --no_trim, and --barcode_both_ends are also available as additional options.
+This workflow results in multiple BAM files being generated in the output folder, one per barcode (formatted as NAME_BARCODEXX.bam) and one for all unclassified reads. As with the in-line mode, --emit_fastq, --no_trim, and --barcode_both_ends are also available as additional options.
 
 ## References
 - [Protocol for Influenza A Custom Barcoded Primers](https://www.protocols.io/view/optimized-rt-pcr-protocols-for-whole-genome-amplif-bp2l62r15gqe/v1)
