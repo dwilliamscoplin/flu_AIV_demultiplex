@@ -31,7 +31,7 @@ To use this workflow, ensure you have the following installed:
 ## Usage
 - **For raw (.pod5 or .fast5)** reads run the workflow using the following command:
    ```bash
-   nextflow run main-basecaller.nf <model> --min_qscore <number>
+   nextflow run main.nf <model> --min_qscore <number>
 
    #Options:
    <model>: specify model speed (fast, hac, or sup) to automatically select a basecalling model.
@@ -45,7 +45,7 @@ To use this workflow, ensure you have the following installed:
    
 - **For existing basecalled (.bam, .fastq, .fastq.gz) datasets** run the workflow using the following command:
    ```bash
-   nextflow run main-demux.nf
+   nextflow run main.nf
 
    #Options:
    --emit_fastq: Specify to generate FASTQ output instead of default BAM.
@@ -54,7 +54,7 @@ To use this workflow, ensure you have the following installed:
   ```
 
 ## Output
-Both workflows result in multiple BAM files being generated in the output/basecalled folder, one per barcode (formatted as NAME_BARCODEXX.bam) and one for all unclassified reads. As with the in-line mode, --emit_fastq, --no_trim, and --barcode_both_ends are also available as additional options.
+This workflow results in multiple BAM files being generated in the output/basecalled folder, one per barcode (formatted as NAME_BARCODEXX.bam) and one for all unclassified reads. As with the in-line mode, --emit_fastq, --no_trim, and --barcode_both_ends are also available as additional options.
 
 ## References
 - [Protocol for Influenza A Custom Barcoded Primers](https://www.protocols.io/view/optimized-rt-pcr-protocols-for-whole-genome-amplif-bp2l62r15gqe/v1)
