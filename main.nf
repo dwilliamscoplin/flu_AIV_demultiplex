@@ -13,7 +13,7 @@ raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('
 process "dorado_basecalling" {
     tag 'dorado_basecaller'
 
-    publishDir "${projectDir}/output", mode: 'copy'
+    publishDir "${projectDir}", mode: 'copy'
 
     input:
     val model_arg
@@ -21,12 +21,11 @@ process "dorado_basecalling" {
     val min_qscore
     
     output:
-    path "basecalled/*", emit: basecalled
+    path "output", emit: basecalled
 
     script:
     """
-    mkdir -p 'basecalled'
-
+    
     dorado basecaller \\
         ${model_arg} \\
         ${input_dir} \\
@@ -34,7 +33,7 @@ process "dorado_basecalling" {
         --min-qscore '${min_qscore}'\\
         --no-trim \\
         | dorado demux \\
-        --output-dir "basecalled/" \\
+        --output-dir "output" \\
         ${params.no_trim ? '--no-trim' : ''} \\
         ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${params.emit_fastq ? '--emit-fastq' : ''} \\
@@ -48,20 +47,19 @@ process "dorado_basecalling" {
 process "dorado_demultiplex" {
     tag 'dorado_demux'
 
-    publishDir "${projectDir}/output", mode: 'copy'
+    publishDir "${projectDir}", mode: 'copy'
 
     input:
     val input_dir
         
     output:
-    path "demultiplexed/*", emit: demultiplexed
+    path "output", emit: demultiplexed
         
     script:
     """
-    mkdir -p 'demultiplexed'
-    
+        
     dorado demux \\
-        --output-dir "demultiplexed/" \\
+        --output-dir "output" \\
         ${params.no_trim ? '--no-trim' : ''} \\
         ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${params.emit_fastq ? '--emit-fastq' : ''} \\
