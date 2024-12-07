@@ -2,10 +2,10 @@
 
 nextflow.enable.dsl=2
 
-params.min_qscore = null // User-defined parameter to discard reads with mean Q-score below this threshold. [nargs=0..1] [default: 0]
-params.no_trim = false // Optional, default is false
-params.barcode_both_ends = false // Optional, default is false
-params.emit_fastq = false // Optional, default is false
+params.min_qscore = 0 // User-defined parameter to discard reads with mean Q-score [default: 0]
+params.no_trim = false // Skip trimming of barcodes, adapters, and primers. Optional, default is false
+params.barcode_both_ends = false // Require both ends of a read to be barcoded for a double-ended barcode. Optional, default is false
+params.emit_fastq = false // Output in fastq format. Optional, default is false.
 params.input_dir = "${projectDir}/data"
 
 raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('.pod5') || it.toString().endsWith('.fast5')}
