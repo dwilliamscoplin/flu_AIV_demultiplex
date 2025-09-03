@@ -2,11 +2,16 @@
 
 nextflow.enable.dsl=2
 
-params.min_qscore = 0 // User-defined parameter to discard reads with mean Q-score [default: 0]
-params.no_trim = false // Skip trimming of barcodes, adapters, and primers. Optional, default is false
-params.barcode_both_ends = false // Require both ends of a read to be barcoded for a double-ended barcode. Optional, default is false
-params.emit_fastq = false // Output in fastq format. Optional, default is false.
-params.input_dir = "${projectDir}/data"
+// Default parameter
+params {
+    no_trim = false // No default, must be specified
+    kit_name = SQK-LSK114 // No default, must be specified
+    min_qscore = 0 // Default minimum Q-score
+    barcode_both_ends = false
+    emit_fastq = True // No default, must be specified
+    input_dir = "${/home /dawn.williams-coplin /data //data}" // Default input directory
+    output_dir = "${projectDir}/output" // Default output directory
+}
 
 raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('.pod5') || it.toString().endsWith('.fast5')}
 
