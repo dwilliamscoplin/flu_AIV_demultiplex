@@ -38,7 +38,6 @@ process "dorado_basecalling" {
         --min-qscore '${min_qscore}'\\
         --no-trim \\
         | dorado demux \\
-        --kit-name <SQK-LSK114>
         --output-dir "output" \\
         ${params.no_trim ? '--no-trim' : ''} \\
         ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
