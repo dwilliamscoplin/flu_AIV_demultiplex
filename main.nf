@@ -4,13 +4,13 @@ nextflow.enable.dsl=2
 
 // Default parameter
 params {
-    no_trim = true 
-    kit_name = SQK-LSK114 
-    min_qscore = 10 
-    barcode_both_ends = false
-    emit_fastq = True 
-    input_dir = "${home /dawn.williams-coplin /data} /data" 
-    output_dir = "${home /dawn.williams-coplin/demux_data}/output" 
+    no_trim = true //
+    kit_name = SQK-LSK114 //
+    min_qscore = 10 //
+    barcode_both_ends = false //
+    emit_fastq = True //
+    input_dir = "${home /dawn.williams-coplin /data} /data" //
+    output_dir = "${home /dawn.williams-coplin/demux_data}/output" //
 
 raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('.pod5') || it.toString().endsWith('.fast5')}
 
