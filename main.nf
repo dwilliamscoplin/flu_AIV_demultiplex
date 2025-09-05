@@ -9,7 +9,7 @@ params {
     min_qscore = 10 // Default minimum Q-score
     barcode_both_ends = false
     emit_fastq = True // No default, must be specified
-    input_dir = "${/home /dawn.williams-coplin /data} /data" // Default input directory
+    input_dir = "${home /dawn.williams-coplin /data} /data" // Default input directory
     output_dir = "${home /dawn.williams-coplin/demux_data}/output" // Default output directory
 }
 
