@@ -1,6 +1,6 @@
 [arrangement]
 name = "BC"
-kit = "BC"
+--kit BC 
 
 mask1_front = ""
 mask1_rear = "AGCGAAAGCAGG"
