@@ -2,7 +2,6 @@
 
 nextflow.enable.dsl=2
 
-// Default parameter
 params {
     no_trim = true 
     kit_name = "SQK-LSK114"//Default value provided
@@ -11,6 +10,8 @@ params {
     emit_fastq = true 
     input_dir = "/home/dawn.williams-coplin/data"
     output_dir = "/home/dawn.williams-coplin/demux_data/output"
+    model_arg=null //User should provide via--model_arg
+}
 
 raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('.pod5') || it.toString().endsWith('.fast5')}
 
