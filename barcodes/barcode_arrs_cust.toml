@@ -11,7 +11,7 @@ mask2_rear = "CCTTGTTTCTACT"
 barcode1_pattern = "fwd%02i"
 barcode2_pattern = "rev%02i"
 first_index = 1
-last_index = 24
+last_index = 96
 
 ## Scoring options
 [scoring]
