@@ -1,104 +1,89 @@
-#! /usr/bin/env nextflow
+#!/usr/bin/env nextflow
 
 nextflow.enable.dsl=2
 
 params {
-    no_trim = true 
-    kit_name = "SQK-LSK114"//Default value provided
-    min_qscore = 10 
+    no_trim = true
+    kit_name = 'SQK-LSK114' // Default value provided
+    min_qscore = 10
     barcode_both_ends = false
-    emit_fastq = true 
-    input_dir = "/home/dawn.williams-coplin/data"
-    output_dir = "/home/dawn.williams-coplin/demux_data/output"
-    model_arg=null //User should provide via--model_arg
+    emit_fastq = true
+    input_dir = '/home/dawn.williams-coplin/data'
+    output_dir = '/home/dawn.williams-coplin/demux_data/output'
+    model_arg = null  // User should provide via --model_arg
 }
 
-raw_reads = file("${params.input_dir}").list().findAll {it.toString().endsWith('.pod5') || it.toString().endsWith('.fast5')}
+Channel
+    .fromPath("${params.input_dir}/*.{pod5,fast5}")
+    .ifEmpty { Channel.empty() }
+    .set { raw_reads }
 
-process "dorado_basecalling" {
+process dorado_basecalling {
     tag 'dorado_basecaller'
-
-    publishDir "${projectDir}", mode: 'copy'
+    publishDir "${params.output_dir}", mode: 'copy'
 
     input:
     val model_arg
     val input_dir
     val min_qscore
-    
+
     output:
     path "output", emit: basecalled
 
     script:
     """
-    
     dorado basecaller \\
         ${model_arg} \\
         ${input_dir} \\
         --device auto \\
-        --min-qscore '${min_qscore}'\\
+        --min-qscore '${min_qscore}' \\
         --no-trim \\
         | dorado demux \\
-        --output-dir "output" \\
+        --output-dir \"output\" \\
         ${params.no_trim ? '--no-trim' : ''} \\
         ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${params.emit_fastq ? '--emit-fastq' : ''} \\
         --emit-summary \\
-        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
-        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
-        --verbose      
+        --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
+        --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
+        --verbose
     """
 }
 
-process "dorado_demultiplex" {
+process dorado_demultiplex {
     tag 'dorado_demux'
-
-    publishDir "${projectDir}", mode: 'copy'
+    publishDir "${params.output_dir}", mode: 'copy'
 
     input:
     val input_dir
-        
+
     output:
     path "output", emit: demultiplexed
-        
+
     script:
     """
-        
     dorado demux \\
-        --output-dir "output" \\
+        --output-dir \"output\" \\
         ${params.no_trim ? '--no-trim' : ''} \\
         ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${params.emit_fastq ? '--emit-fastq' : ''} \\
-        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
-        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
+        --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
+        --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
         ${input_dir}
     """
 }
 
 workflow {
-
-    if (raw_reads) {
+    if (raw_reads.size() > 0) {
         println "POD5/FAST5 files detected, proceeding with basecalling..."
-        
-        if (!args || args.size () !=1) {
-            error "You must specify a model selection using '<fast, hac, or sup>'. Use <fast,hac,sup>@v<version> for automatic model selection"
+
+        if (!params.model_arg) {
+            error "You must specify a model selection using '--model_arg <fast,hac,sup>@v<version>'."
         }
 
-        if (!params.min_qscore) {
-            error "You must specify a parameter to discard reads with mean Q-score below this threshold using '--min_qscore <number>'"
-        }
-
-    model_arg = args[0]
-
-    input_dir = params.input_dir
-    min_qscore = params.min_qscore
-    
-    dorado_basecalling(model_arg, input_dir, min_qscore)
-
+        dorado_basecalling(params.model_arg, params.input_dir, params.min_qscore)
     } else {
         println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
-
-        input_dir = params.input_dir
-        
-        dorado_demultiplex(input_dir)
+        dorado_demultiplex(params.input_dir)
     }
 }
