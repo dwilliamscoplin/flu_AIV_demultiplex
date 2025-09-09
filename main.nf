@@ -26,6 +26,9 @@ process dorado_basecalling {
     val model_arg
     val input_dir
     val min_qscore
+    val no_trim
+    val barcode_both_ends
+    val emit_fastq
 
     output:
     path "output", emit: basecalled
@@ -56,6 +59,10 @@ process dorado_demultiplex {
 
     input:
     val input_dir
+    val no_trim
+    val barcode_both_ends
+    val emit_fast_q
+    val output_dir
 
     output:
     path "output", emit: demultiplexed
@@ -81,9 +88,23 @@ workflow {
             error "You must specify a model selection using '--model_arg <fast,hac,sup>@v<version>'."
         }
 
-        dorado_basecalling(params.model_arg, params.input_dir, params.min_qscore)
+        dorado_basecalling(
+           params.model_arg,
+           params.input_dir,
+           params.min_qscore,
+           params.no_trim,
+           params.barcode_both_ends,
+           params.emit_fastq,
+           params.output_dir
+)
     } else {
         println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
-        dorado_demultiplex(params.input_dir)
+        dorado_demultiplex(
+          params.input_dir,
+          params.no_trim,
+          params.barcode_both_ends,
+          params.emit_fastq,
+          params.output_dir
+)
     }
 }
