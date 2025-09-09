@@ -29,6 +29,7 @@ process dorado_basecalling {
     val no_trim
     val barcode_both_ends
     val emit_fastq
+    val output_dir
 
     output:
     path "output", emit: basecalled
