@@ -1,5 +1,7 @@
 #!/usr/bin/env nextflow
 
+nextflow.enable.dsl=2
+
 params {
     no_trim = true
     kit_name = 'SQK-LSK114' // Default value provided
