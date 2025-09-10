@@ -2,17 +2,6 @@
 
 nextflow.enable.dsl=2
 
-params {
-    no_trim = true
-    kit_name = --no-classify // Default value provided
-    min_qscore = 10
-    barcode_both_ends = false
-    emit_fastq = true
-    input_dir = '/home/dawn.williams-coplin/data'
-    output_dir = '/home/dawn.williams-coplin/demux_data/output'
-    model_arg = null  // User should provide via --model_arg
-}
-
 Channel
     .fromPath("${params.input_dir}/*.{pod5,fast5}")
     .ifEmpty { Channel.empty() }
@@ -20,7 +9,7 @@ Channel
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
-    publishDir output_dir, mode: 'copy'
+    publishDir params.output_dir, mode: 'copy'
 
     input:
     val model_arg
@@ -56,7 +45,7 @@ process dorado_basecalling {
 
 process dorado_demultiplex {
     tag 'dorado_demux'
-    publishDir output_dir, mode: 'copy'
+    publishDir params.output_dir, mode: 'copy'
 
     input:
     val input_dir
