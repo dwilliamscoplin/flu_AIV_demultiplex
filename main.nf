@@ -71,7 +71,7 @@ process dorado_demultiplex {
 }
 
 workflow {
-    if (raw_reads.size > 0) {
+    if (raw_reads.size() > 0) {
         println "POD5/FAST5 files detected, proceeding with basecalling..."
 
         if (!params.model_arg) {
