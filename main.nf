@@ -20,7 +20,7 @@ Channel
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
-    publishDir "${params.output_dir}", mode: 'copy'
+    publishDir output_dir, mode: 'copy'
 
     input:
     val model_arg
@@ -48,15 +48,15 @@ process dorado_basecalling {
         ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${emit_fastq ? '--emit-fastq' : ''} \\
         --emit-summary \\
-        --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
-        --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
+        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
+        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
         --verbose
     """
 }
 
 process dorado_demultiplex {
     tag 'dorado_demux'
-    publishDir "${params.output_dir}", mode: 'copy'
+    publishDir output_dir, mode: 'copy'
 
     input:
     val input_dir
@@ -75,8 +75,8 @@ process dorado_demultiplex {
         ${no_trim ? '--no-trim' : ''} \\
         ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${emit_fastq ? '--emit-fastq' : ''} \\
-        --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
-        --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
+        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
+        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
         ${input_dir}
     """
 }
@@ -97,7 +97,7 @@ workflow {
            params.barcode_both_ends,
            params.emit_fastq,
            params.output_dir
-)
+        )
     } else {
         println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
         dorado_demultiplex(
