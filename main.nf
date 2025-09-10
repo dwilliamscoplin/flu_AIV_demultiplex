@@ -4,7 +4,7 @@ nextflow.enable.dsl=2
 
 params {
     no_trim = true
-    kit_name = 'SQK-LSK114' // Default value provided
+    kit_name = --no-classify // Default value provided
     min_qscore = 10
     barcode_both_ends = false
     emit_fastq = true
