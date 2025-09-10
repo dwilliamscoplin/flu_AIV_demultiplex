@@ -75,7 +75,7 @@ workflow {
         println "POD5/FAST5 files detected, proceeding with basecalling..."
 
         if (!params.model_arg) {
-            error "You must specify a model selection using '--model_arg <fast,hac,sup>@v<version>'."
+            --model_arg hac@v0.9.1+c8c2c9f
         }
 
         dorado_basecalling(
