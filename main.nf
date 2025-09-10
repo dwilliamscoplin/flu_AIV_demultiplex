@@ -41,12 +41,12 @@ process dorado_basecalling {
         ${input_dir} \\
         --device auto \\
         --min-qscore '${min_qscore}' \\
-        --no-trim \\
+        ${no_trim ? '--no-trim' : ''} \\
         | dorado demux \\
-        --output-dir \"output\" \\
-        ${params.no_trim ? '--no-trim' : ''} \\
-        ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
-        ${params.emit_fastq ? '--emit-fastq' : ''} \\
+        --output-dir "output" \\
+        ${no_trim ? '--no-trim' : ''} \\
+        ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
+        ${emit_fastq ? '--emit-fastq' : ''} \\
         --emit-summary \\
         --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
         --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
@@ -71,10 +71,10 @@ process dorado_demultiplex {
     script:
     """
     dorado demux \\
-        --output-dir \"output\" \\
-        ${params.no_trim ? '--no-trim' : ''} \\
-        ${params.barcode_both_ends ? '--barcode-both-ends' : ''} \\
-        ${params.emit_fastq ? '--emit-fastq' : ''} \\
+        --output-dir "output" \\
+        ${no_trim ? '--no-trim' : ''} \\
+        ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
+        ${emit_fastq ? '--emit-fastq' : ''} \\
         --barcode-sequences \"${projectDir}/custom_barcodes.fasta\" \\
         --barcode-arrangement \"${projectDir}/barcode_arrs_cust.toml\" \\
         ${input_dir}
@@ -106,6 +106,6 @@ workflow {
           params.barcode_both_ends,
           params.emit_fastq,
           params.output_dir
-)
+       )
     }
 }
