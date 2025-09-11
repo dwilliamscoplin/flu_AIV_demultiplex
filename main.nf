@@ -72,32 +72,28 @@ process dorado_demultiplex {
 }
 
 workflow {
-   /*
-    *only processes can be invoked here
-    *Use .ifEmpty to handle the conditional logic
-    * - If raw_reads channel is empty, run dorado_demultiplex
-    * - Otherwise, run dorado_basecalling
-    */
-    raw_reads
-       .ifEmpty {
-           dorado_demultiplex(
+   // Branch based on whether raw_reads is empty
+   // Use .count() to determine file presence
+   raw_reads.count().view { n ->
+       if (n > 0) {
+           dorado_basecalling(
+              model_arg,
+              params.input_dir,
+              params.min_qscore,
+              params.no_trim,
+              params.barcode_both_ends,
+              params.emit_fastq,
+              params.output_dir
+           )
+      } else {
+          dorado_demultiplex(
               params.input_dir,
               params.no_trim,
               params.barcode_both_ends,
               params.emit_fastq,
               params.output_dir
-     )
-  }
-  .map { 
-     dorado_basecalling(
-        model_arg,
-        params.input_dir,
-        params.min_qscore,
-        params.no_trim,
-        params.barcode_both_ends,
-        params.emit_fastq,
-        params.output_dir
-        )
-    } 
+       )
+     }
+   } 
 }        
     
