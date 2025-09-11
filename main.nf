@@ -77,8 +77,8 @@ workflow {
         if (!params.model_arg) {
             --model_arg hac@v0.9.1+c8c2c9f
         }
-    }
-        dorado_basecalling(
+
+           dorado_basecalling(
            params.model_arg,
            params.input_dir,
            params.min_qscore,
@@ -97,4 +97,4 @@ workflow {
           params.output_dir
        )
     }
-
+}
