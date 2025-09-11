@@ -2,7 +2,7 @@
 
 nextflow.enable.dsl=2
 
-//set default model argument outside workflow block
+//set default model argument 
 def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
 
 // Channel for input files
@@ -72,8 +72,13 @@ process dorado_demultiplex {
 }
 
 workflow {
-   // Use the channel to trigger basecalling if files exist, else demultiplex
-   raw_reads
+   /*
+    *only processes can be invoked here
+    *Use .ifEmpty to handle the conditional logic
+    * - If raw_reads channel is empty, run dorado_demultiplex
+    * - Otherwise, run dorado_basecalling
+    */
+    raw_reads
        .ifEmpty {
            dorado_demultiplex(
               params.input_dir,
@@ -83,7 +88,7 @@ workflow {
               params.output_dir
      )
   }
-.map { file ->
+  .map { 
      dorado_basecalling(
         model_arg,
         params.input_dir,
