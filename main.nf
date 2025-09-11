@@ -2,14 +2,12 @@
 
 nextflow.enable.dsl=2
 
-// Channel for input files
-    raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
-    .ifEmpty { Channel.empty() }
-    .set { raw_reads }
-
-//set default if param no provided
+//set default model argument outside workflow block
 def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
 
+// Channel for input files
+    raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
+    
 process dorado_basecalling {
     tag 'dorado_basecaller'
     publishDir params.output_dir, mode: 'copy'
@@ -74,7 +72,7 @@ process dorado_demultiplex {
 }
 
 workflow {
-   // Route based on channel emptiness
+   // Use the channel to trigger basecalling if files exist, else demultiplex
    raw_reads
        .ifEmpty {
            dorado_demultiplex(
@@ -85,7 +83,7 @@ workflow {
               params.output_dir
      )
   }
-.otherwise{
+.map { file ->
      dorado_basecalling(
         model_arg,
         params.input_dir,
