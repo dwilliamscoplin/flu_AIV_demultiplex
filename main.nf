@@ -72,28 +72,31 @@ process dorado_demultiplex {
 }
 
 workflow {
-   // Branch based on whether raw_reads is empty
-   // Use .count() to determine file presence
-   raw_reads.count().view { n ->
-       if (n > 0) {
-           dorado_basecalling(
-              model_arg,
-              params.input_dir,
-              params.min_qscore,
-              params.no_trim,
-              params.barcode_both_ends,
-              params.emit_fastq,
-              params.output_dir
-           )
-      } else {
-          dorado_demultiplex(
-              params.input_dir,
-              params.no_trim,
-              params.barcode_both_ends,
-              params.emit_fastq,
-              params.output_dir
-       )
-     }
-   } 
-}        
-    
+    /*
+    * Use the count operator to determine if input files exist.
+    * This block is fully Groovy and inside workflow context, so it's valid.
+    */
+    raw_reads.count().view { nfiles ->
+        if (nfiles > 0) {
+            println "POD5/FAST5 files detected, proceeding with basecalling..."
+            dorado_basecalling(
+                model_arg,
+                params.input_dir,
+                params.min_qscore,
+                params.no_trim,
+                params.barcode_both_ends,
+                params.emit_fastq,
+                params.output_dir
+            )
+        } else {
+            println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
+            dorado_demultiplex(
+                params.input_dir,
+                params.no_trim,
+                params.barcode_both_ends,
+                params.emit_fastq,
+                params.output_dir
+            )
+        }
+    }
+}  
