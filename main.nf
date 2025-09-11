@@ -2,12 +2,12 @@
 
 nextflow.enable.dsl=2
 
-//set default model argument 
+// Set default model argument
 def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
 
 // Channel for input files
-    raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
-    
+raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
+
 process dorado_basecalling {
     tag 'dorado_basecaller'
     publishDir params.output_dir, mode: 'copy'
@@ -52,7 +52,7 @@ process dorado_demultiplex {
     val input_dir
     val no_trim
     val barcode_both_ends
-    val emit_fast_q
+    val emit_fastq
     val output_dir
 
     output:
@@ -71,32 +71,26 @@ process dorado_demultiplex {
     """
 }
 
+// Parameter to control which branch to run
+// Add to nextflow.config or set with --run_basecalling true/false
 workflow {
-    /*
-    * Use the count operator to determine if input files exist.
-    * This block is fully Groovy and inside workflow context, so it's valid.
-    */
-    raw_reads.count().view { nfiles ->
-        if (nfiles > 0) {
-            println "POD5/FAST5 files detected, proceeding with basecalling..."
-            dorado_basecalling(
-                model_arg,
-                params.input_dir,
-                params.min_qscore,
-                params.no_trim,
-                params.barcode_both_ends,
-                params.emit_fastq,
-                params.output_dir
-            )
-        } else {
-            println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
-            dorado_demultiplex(
-                params.input_dir,
-                params.no_trim,
-                params.barcode_both_ends,
-                params.emit_fastq,
-                params.output_dir
-            )
-        }
+    if (params.run_basecalling) {
+        dorado_basecalling(
+            model_arg,
+            params.input_dir,
+            params.min_qscore,
+            params.no_trim,
+            params.barcode_both_ends,
+            params.emit_fastq,
+            params.output_dir
+        )
+    } else {
+        dorado_demultiplex(
+            params.input_dir,
+            params.no_trim,
+            params.barcode_both_ends,
+            params.emit_fastq,
+            params.output_dir
+        )
     }
-}  
+}
