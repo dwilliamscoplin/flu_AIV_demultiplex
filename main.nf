@@ -85,8 +85,7 @@ workflow {
               params.emit_fastq,
               params.output_dir
            )
-      } 
-        else {
+      } else {
           dorado_demultiplex(
               params.input_dir,
               params.no_trim,
