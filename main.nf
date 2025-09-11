@@ -2,10 +2,13 @@
 
 nextflow.enable.dsl=2
 
-Channel
-    .fromPath("${params.input_dir}/*.{pod5,fast5}")
+// Channel for input files
+    raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
     .ifEmpty { Channel.empty() }
     .set { raw_reads }
+
+//set default if param no provided
+def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
@@ -71,29 +74,27 @@ process dorado_demultiplex {
 }
 
 workflow {
-     def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
-
-    if (files){
-        println "POD5/FAST5 files detected, proceeding with basecalling..."
-
-           dorado_basecalling(
-           model_arg,
-           params.input_dir,
-           params.min_qscore,
-           params.no_trim,
-           params.barcode_both_ends,
-           params.emit_fastq,
-           params.output_dir
-        )
-    } else {
-        println "No POD5/FAST5 files detected, proceeding with demultiplexing..."
-        dorado_demultiplex(
-          params.input_dir,
-          params.no_trim,
-          params.barcode_both_ends,
-          params.emit_fastq,
-          params.output_dir
+   // Route based on channel emptiness
+   raw_reads
+       .ifEmpty {
+           dorado_demultiplex(
+              params.input_dir,
+              params.no_trim,
+              params.barcode_both_ends,
+              params.emit_fastq,
+              params.output_dir
      )
-    }
   }
-}
+.otherwise{
+     dorado_basecalling(
+        model_arg,
+        params.input_dir,
+        params.min_qscore,
+        params.no_trim,
+        params.barcode_both_ends,
+        params.emit_fastq,
+        params.output_dir
+        )
+    } 
+}        
+    
