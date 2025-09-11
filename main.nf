@@ -71,15 +71,13 @@ process dorado_demultiplex {
 }
 
 workflow {
+     def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
+
     if (raw_reads){
         println "POD5/FAST5 files detected, proceeding with basecalling..."
 
-        if (!params.model_arg) {
-            --model_arg hac@v0.9.1+c8c2c9f
-        }
-
            dorado_basecalling(
-           params.model_arg,
+           model_arg,
            params.input_dir,
            params.min_qscore,
            params.no_trim,
@@ -95,6 +93,7 @@ workflow {
           params.barcode_both_ends,
           params.emit_fastq,
           params.output_dir
-       )
+     )
     }
+  }
 }
