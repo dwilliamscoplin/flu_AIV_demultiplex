@@ -3,7 +3,7 @@
 nextflow.enable.dsl=2
 
 // Set default model argument
-def model_arg = params.model_arg ?: 'hac@v0.9.1+c8c2c9f'
+def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
 // Channel for input files
 raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
