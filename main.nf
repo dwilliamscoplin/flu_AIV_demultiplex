@@ -65,8 +65,8 @@ process dorado_demultiplex {
         ${no_trim ? '--no-trim' : ''} \\
         ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${emit_fastq ? '--emit-fastq' : ''} \\
-        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
-        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
+        --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
+        --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
         ${input_dir}
     """
 }
