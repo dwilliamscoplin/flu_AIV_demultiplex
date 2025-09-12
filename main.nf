@@ -5,15 +5,12 @@ nextflow.enable.dsl=2
 // Set default model argument
 def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
-// Channel for fastq.gz files (for direct demux)
-fastq.gz_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
-
 process dorado_demultiplex {
     tag 'dorado_demux'
-    publishDir params.output_dir, mode: 'copy'
+    publishDir params.input_dir, mode: 'copy'
 
     input:
-    path fastq.gz_files
+    val input_dir
     val no_trim
     val barcode_both_ends
     val emit_fastq
@@ -32,14 +29,13 @@ process dorado_demultiplex {
         --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
         --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
         --kit-name "BC" \\
-        ${fastq.gz_files}
     """
 }
 
 workflow {
     
             dorado_demultiplex(
-                fastq.gz_files,
+                params.input_dir,
                 params.no_trim,
                 params.barcode_both_ends,
                 params.emit_fastq,
