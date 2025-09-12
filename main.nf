@@ -5,8 +5,8 @@ nextflow.enable.dsl=2
 // Set default model argument
 def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
-// Channel for fastq files (for direct demux)
-fastq_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
+// Channel for fastq.gz files (for direct demux)
+fastq.gz_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
 
 process dorado_demultiplex {
     tag 'dorado_demux'
