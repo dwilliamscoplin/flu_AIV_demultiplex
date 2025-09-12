@@ -38,8 +38,8 @@ process dorado_basecalling {
         ${barcode_both_ends ? '--barcode-both-ends' : ''} \\
         ${emit_fastq ? '--emit-fastq' : ''} \\
         --emit-summary \\
-        --barcode-sequences "${projectDir}/custom_barcodes.fasta" \\
-        --barcode-arrangement "${projectDir}/barcode_arrs_cust.toml" \\
+        --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
+        --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
         --verbose
     """
 }
