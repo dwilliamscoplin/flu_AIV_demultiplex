@@ -5,16 +5,20 @@ nextflow.enable.dsl=2
 // Set default model argument
 def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
-// Channel for input files
-raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}")
+// Channel for raw input files (POD5/FAST5)
+raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists: true)
+has_raw_reads = raw_reads.map { true }.ifEmpty { false }.first()
+
+// Channel for fastq files (for direct demux)
+fastq_files = Channel.fromPath("${params.input_dir}/*.fastq", checkIfExists: true)
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
     publishDir params.output_dir, mode: 'copy'
 
     input:
+    path reads
     val model_arg
-    val input_dir
     val min_qscore
     val no_trim
     val barcode_both_ends
@@ -22,13 +26,13 @@ process dorado_basecalling {
     val output_dir
 
     output:
-    path "output", emit: basecalled
+    path "output/*.fastq", emit: basecalled_fastq
 
     script:
     """
     dorado basecaller \\
         ${model_arg} \\
-        ${input_dir} \\
+        ${reads} \\
         --device auto \\
         --min-qscore '${min_qscore}' \\
         ${no_trim ? '--no-trim' : ''} \\
@@ -49,7 +53,7 @@ process dorado_demultiplex {
     publishDir params.output_dir, mode: 'copy'
 
     input:
-    val input_dir
+    path fastq_files
     val no_trim
     val barcode_both_ends
     val emit_fastq
@@ -67,31 +71,38 @@ process dorado_demultiplex {
         ${emit_fastq ? '--emit-fastq' : ''} \\
         --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
         --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
-        --kit-name "BC" INPUT_FILE.fastq
-        ${input_dir}
+        --kit-name "BC" \\
+        ${fastq_files}
     """
 }
 
-// Parameter to control which branch to run
-// Add to nextflow.config or set with --run_basecalling true/false
 workflow {
-    if (params.run_basecalling) {
-        dorado_basecalling(
-            model_arg,
-            params.input_dir,
-            params.min_qscore,
-            params.no_trim,
-            params.barcode_both_ends,
-            params.emit_fastq,
-            params.output_dir
-        )
-    } else {
-        dorado_demultiplex(
-            params.input_dir,
-            params.no_trim,
-            params.barcode_both_ends,
-            params.emit_fastq,
-            params.output_dir
-        )
+    has_raw_reads.view { exists ->
+        if (exists) {
+            dorado_basecalling(
+                raw_reads,
+                model_arg,
+                params.min_qscore,
+                params.no_trim,
+                params.barcode_both_ends,
+                params.emit_fastq,
+                params.output_dir
+            )
+            dorado_demultiplex(
+                dorado_basecalling.out.basecalled_fastq,
+                params.no_trim,
+                params.barcode_both_ends,
+                params.emit_fastq,
+                params.output_dir
+            )
+        } else {
+            dorado_demultiplex(
+                fastq_files,
+                params.no_trim,
+                params.barcode_both_ends,
+                params.emit_fastq,
+                params.output_dir
+            )
+        }
     }
 }
