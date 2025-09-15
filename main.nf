@@ -87,14 +87,8 @@ workflow {
                 params.barcode_both_ends,
                 params.emit_fastq,
                 params.output_dir
-            )
-            dorado_demultiplex(
-                dorado_basecalling.out.basecalled_fastq,
-                params.no_trim,
-                params.barcode_both_ends,
-                params.emit_fastq,
-                params.output_dir
-            )
+          )
+
         } else {
             dorado_demultiplex(
                 fastq.gz_files,
@@ -105,5 +99,5 @@ workflow {
             )
         }
     }
-}
+
 
