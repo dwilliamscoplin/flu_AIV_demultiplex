@@ -87,7 +87,8 @@ workflow {
                 params.barcode_both_ends,
                 params.emit_fastq,
                 params.output_dir
-         
+            )
+
         } else {
             dorado_demultiplex(
                 fastq.gz_files,
