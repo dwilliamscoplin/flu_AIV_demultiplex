@@ -72,7 +72,7 @@ process dorado_demultiplex {
         --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
         --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
         --kit-name "BC" \\
-        ${fastq_files}
+        ${fastq.gz_files}
     """
 }
 
