@@ -10,7 +10,7 @@ raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists
 has_raw_reads = raw_reads.map { true }.ifEmpty { false }.first()
 
 // Channel for fastq.gz files (for direct demux)
-fastq.gz_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
+fastq_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
