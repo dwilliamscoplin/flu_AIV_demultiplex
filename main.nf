@@ -9,8 +9,8 @@ def model_arg = params.model_arg ?: 'hac@v0.8.3'
 raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists: true)
 has_raw_reads = raw_reads.map { true }.ifEmpty { false }.first()
 
-// Channel for fastq files (for direct demux)
-fastq_files = Channel.fromPath("${params.input_dir}/*.fastq", checkIfExists: true)
+// Channel for fastq.gz files (for direct demux)
+fastq.gz_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
@@ -53,7 +53,7 @@ process dorado_demultiplex {
     publishDir params.output_dir, mode: 'copy'
 
     input:
-    path fastq_files
+    path fastq.gz_files
     val no_trim
     val barcode_both_ends
     val emit_fastq
@@ -97,7 +97,7 @@ workflow {
             )
         } else {
             dorado_demultiplex(
-                fastq_files,
+                fastq.gz_files,
                 params.no_trim,
                 params.barcode_both_ends,
                 params.emit_fastq,
