@@ -30,14 +30,6 @@ process dorado_basecalling {
 
     script:
     """
-  if [ -f "${POD5/FAST5}" ]; then
-        echo "Input file exists, processing for output basecalled_fastq" 
-        # Perform operations to generate output basecalled_fastq
-    else
-        echo "Input file not found, processing for output demultiplexed" 
-        # Perform operations to generate output demultiplexed
-    fi
-
     dorado basecaller \\
         ${model_arg} \\
         ${reads} \\
