@@ -55,7 +55,7 @@ process dorado_demultiplex {
         fastq_files  // Only run if fastq_files channel is not empty
 
     input:
-    path fastq.gz_files
+    path fastq_files
     val no_trim
     val barcode_both_ends
     val emit_fastq
@@ -74,7 +74,7 @@ process dorado_demultiplex {
         --barcode-sequences "${projectDir}/barcodes/custom_barcodes.fasta" \\
         --barcode-arrangement "${projectDir}/barcodes/barcode_arrs_cust.toml" \\
         --kit-name "BC" \\
-        ${fastq.gz_files}
+        ${fastq_files}
     """
 }
 
