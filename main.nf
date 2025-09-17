@@ -5,7 +5,7 @@ nextflow.enable.dsl=2
 // Set default model argument
 def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
-// Channel for raw input files (POD5/FAST5)
+// Channel for raw input files (pod5/fast5)
 raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists: true)
 has_raw_reads = raw_reads.map { true }.ifEmpty { false }.first()
 
