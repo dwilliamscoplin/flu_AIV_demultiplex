@@ -77,8 +77,9 @@ process dorado_demultiplex {
 }
 
 workflow {
-    has_raw_reads.view { exists ->
-        if (exists) {
+    if (raw_reads) {
+        printin "POD5/FAST5 files detected, proceeding with basecalling..."
+
             dorado_basecalling(
                 raw_reads,
                 model_arg,
@@ -90,6 +91,8 @@ workflow {
             )
 
         } else {
+          printin "No POD5/FAST5 files detected, proceeding with demultiplexing..."
+
             dorado_demultiplex(
                 fastq.gz_files,
                 params.no_trim,
