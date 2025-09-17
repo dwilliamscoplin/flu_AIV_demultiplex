@@ -6,15 +6,15 @@ nextflow.enable.dsl=2
 def model_arg = params.model_arg ?: 'hac@v0.8.3'
 
 // Channel for raw input files (pod5/fast5)
-raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists: true)
-has_raw_reads = raw_reads.map { true }.ifEmpty { false }.first()
-
+raw_reads = Channel.fromPath("${params.input_dir}/*.{pod5,fast5}", checkIfExists: false)
 // Channel for fastq.gz files (for direct demux)
-fastq_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: true)
+fastq_files = Channel.fromPath("${params.input_dir}/*.fastq.gz", checkIfExists: false)
 
 process dorado_basecalling {
     tag 'dorado_basecaller'
     publishDir params.output_dir, mode: 'copy'
+    when:
+        raw_reads  // Only run if raw_reads channel is not empty
 
     input:
     path reads
@@ -51,6 +51,8 @@ process dorado_basecalling {
 process dorado_demultiplex {
     tag 'dorado_demux'
     publishDir params.output_dir, mode: 'copy'
+     when:
+        fastq_files  // Only run if fastq_files channel is not empty
 
     input:
     path fastq.gz_files
@@ -77,30 +79,21 @@ process dorado_demultiplex {
 }
 
 workflow {
-    if (has_raw_reads) {
-        // run dorado_basecalling
+    dorado_basecalling(
+        raw_reads,
+        model_arg,
+        params.min_qscore,
+        params.no_trim,
+        params.barcode_both_ends,
+        params.emit_fastq,
+        params.output_dir
+    )
 
-            dorado_basecalling(
-                raw_reads,
-                model_arg,
-                params.min_qscore,
-                params.no_trim,
-                params.barcode_both_ends,
-                params.emit_fastq,
-                params.output_dir
-            )
-
-        } else {
-          // run dorado_demultiplex
-
-            dorado_demultiplex(
-                fastq.gz_files,
-                params.no_trim,
-                params.barcode_both_ends,
-                params.emit_fastq,
-                params.output_dir
-            )
-        }
-    }
-
-
+    dorado_demultiplex(
+        fastq_files,
+        params.no_trim,
+        params.barcode_both_ends,
+        params.emit_fastq,
+        params.output_dir
+    )
+}
